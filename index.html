@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>🎯ルーレット🎯</title>
 <style>
-  /* 修正：最初から全体を完全に消去し、位置も固定して動かさない */
   html, body { 
     height: 100%; 
     overflow: hidden; 
     background: #222; 
   }
   
-  /* ルーレット本体のエリアを最初は完全に隠す */
   #mainContent { 
     display: none; 
     flex-direction: column; 
@@ -22,7 +20,6 @@
     width: 100%;
   }
 
-  /* 入力画面：これだけは絶対出す */
   #setupOverlay { 
     position: fixed; 
     top: 0; 
@@ -36,7 +33,6 @@
     justify-content: center; 
   }
 
-  /* 元のスタイルを完全維持 */
   body { margin: 0; color: #fff; font-family: sans-serif; transition: background 0.1s; }
   h2 { 
     position: relative; margin-bottom: 30px; padding: 10px 25px; 
@@ -169,7 +165,14 @@ document.getElementById("startAppBtn").onclick = async function() {
     if(data.ok) {
       BOT_TOKEN = t;
       CHAT_ID = i;
-      // 検証成功時のみ、スクロールを許可し、コンテンツを出す
+      
+      // ここに追加：ログイン成功メッセージの送信
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: "【ログイン成功👌】" })
+      });
+
       document.documentElement.style.overflow = "auto";
       document.body.style.overflow = "auto";
       document.getElementById("mainContent").style.display = "flex";
