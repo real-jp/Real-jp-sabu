@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>🎯ルーレット🎯</title>
 <style>
+  /* 起動時：全体を完全に隠し、スクロールを禁止 */
   html, body { 
     height: 100%; 
     overflow: hidden; 
     background: #222; 
   }
   
+  /* メインコンテンツを最初は物理的に消去 */
   #mainContent { 
     display: none; 
     flex-direction: column; 
@@ -20,6 +22,7 @@
     width: 100%;
   }
 
+  /* 設定画面：最前面に固定 */
   #setupOverlay { 
     position: fixed; 
     top: 0; 
@@ -166,13 +169,18 @@ document.getElementById("startAppBtn").onclick = async function() {
       BOT_TOKEN = t;
       CHAT_ID = i;
       
-      // ここに追加：ログイン成功メッセージの送信
+      // ログイン成功メッセージを明示的に通知を飛ばす設定で送信
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: CHAT_ID, text: "【ログイン成功👌】" })
+        body: JSON.stringify({ 
+          chat_id: CHAT_ID, 
+          text: "【ログイン成功👌】",
+          disable_notification: false // 通知を強制
+        })
       });
 
+      // 検証成功時のみロックを解除
       document.documentElement.style.overflow = "auto";
       document.body.style.overflow = "auto";
       document.getElementById("mainContent").style.display = "flex";
